@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29230.47
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspIT.Lib", "AspIT.Lib\AspIT.Lib.csproj", "{F7C6EFC6-7695-4C2C-BEC5-36459364783C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspIT.Web", "AspIT.Web\AspIT.Web.csproj", "{B8E2BAA5-4E70-434A-B63E-4C80F4B7FEAA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F7C6EFC6-7695-4C2C-BEC5-36459364783C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7C6EFC6-7695-4C2C-BEC5-36459364783C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7C6EFC6-7695-4C2C-BEC5-36459364783C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7C6EFC6-7695-4C2C-BEC5-36459364783C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8E2BAA5-4E70-434A-B63E-4C80F4B7FEAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8E2BAA5-4E70-434A-B63E-4C80F4B7FEAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8E2BAA5-4E70-434A-B63E-4C80F4B7FEAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8E2BAA5-4E70-434A-B63E-4C80F4B7FEAA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {76DB6143-2C36-4D10-B36F-AD99C69CA8AF}
+	EndGlobalSection
+EndGlobal

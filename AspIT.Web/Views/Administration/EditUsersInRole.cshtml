@@ -1,0 +1,59 @@
+﻿@model List<AspIT.Web.ViewModels.UserRoleViewModel>
+@{
+    ViewData["Title"] = "EditUsersInRole";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var roleId = ViewBag.roleId;
+    var roleName = ViewBag.roleName;
+}
+
+<h2>EditUsersInRole</h2>
+
+<form method="post" id="@roleName">
+    <div class="card">
+        <div class="card-header">
+            <h2>Add or remove users from this role</h2>
+        </div>
+        <div class="card-body">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <div class="form-check m-1">
+                    <input type="hidden" asp-for="@Model[i].UserId" />
+                    <input type="hidden" asp-for="@Model[i].UserName" />
+                    <input asp-for="@Model[i].IsSelected" class="form-check-input" />
+                    <label class="form-check-label">
+                        @Model[i].UserName
+                    </label>
+                </div>
+            }
+        </div>
+        <div class="card-footer">
+            <input type="submit" value="Update" class="btn btn-primary" />
+            <a asp-action="EditRole" asp-route-id="@roleId" class="btn btn-primary">Cancel</a>
+        </div>
+    </div>
+</form>
+
+<script>
+        let myForm = document.getElementById("Admin");
+        myForm.addEventListener("submit", function(e){
+            e.preventDefault();
+
+            let checkboxs = document.querySelectorAll('input[type="checkbox"]');
+            let okay = false;
+
+            for(let i = 0; i < checkboxs.length; i++)
+            {
+                    if(checkboxs[i].checked)
+                {
+                    okay = true;
+                    break;
+                }
+            }
+
+            if(okay){
+                document.getElementById("Admin").submit();
+            }
+
+            else alert("Please check a checkbox");
+        })
+</script>
