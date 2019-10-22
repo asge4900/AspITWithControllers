@@ -23,6 +23,8 @@ namespace AspIT.Web.Controllers
             this.userManager = userManager;
         }
 
+        private Task<ApplicationUser> GetCurrentUserAsync() => userManager.GetUserAsync(HttpContext.User);
+
         [HttpGet]
         public async Task<IActionResult> ManageUserClaims(string userId)    
         {          
@@ -161,14 +163,18 @@ namespace AspIT.Web.Controllers
 
             return RedirectToAction("EditUser", new { id = userId });
         }
-    
 
-    [HttpPost]
+      
+
+
+        [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
         {
             var user = await userManager.FindByIdAsync(id);
 
-            if (user == null)
+            var userLoggedIn = await GetCurrentUserAsync();    
+           
+            if (user == null || userLoggedIn != null && userLoggedIn == user)
             {
                 ViewBag.ErrorMessage = $"User with Id = {id} cannot be found";
                 return View("NotFound");
@@ -357,9 +363,9 @@ namespace AspIT.Web.Controllers
         {
             var role = await roleManager.FindByIdAsync(model.Id);
 
-            if (role == null)
+            if (role == null || role.Name == "Admin")
             {
-                ViewBag.ErrorMessage = $"Role with id = {model.Id} cannot be found";
+                ViewBag.ErrorMessage = $"Role with id = {model.Id} cannot be found or role is Admin";
                 return View("NotFound");
             }
             else

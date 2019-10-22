@@ -1,10 +1,15 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AspIT.Lib.Models;
 using AspIT.Web.ViewModels;
+using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using MimeKit;
 
 namespace AspIT.Web.Controllers
 {
@@ -12,11 +17,13 @@ namespace AspIT.Web.Controllers
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly ILogger<AccountController> logger;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<AccountController> logger)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.logger = logger;
         }
 
         [HttpPost]
@@ -74,14 +81,43 @@ namespace AspIT.Web.Controllers
 
                 if (result.Succeeded)
                 {
+                    var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                    var confirmationLink = Url.Action("ConfirmEmail", "Account",
+                                           new { userId = user.Id, token = token}, Request.Scheme);
+
+                    logger.Log(LogLevel.Warning, confirmationLink);
+
+                    //var message = new MimeMessage();
+                    //message.From.Add(new MailboxAddress("Test project", "asgerlassen@gmail.com"));
+                    //message.To.Add(new MailboxAddress(user.UserName, user.Email));
+                    //message.Subject = "Test mail in asp.net core";
+                    //message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+                    //{                        
+
+                    //    Text = $"Please confirm your email by clicking this link: <a href='{confirmationLink}'>Link</a>"
+                    //};
+
+                    //using (var client = new SmtpClient())
+                    //{
+                    //    client.Connect("smtp.gmail.com", 587, false);
+
+                    //    //Change Password 
+                    //    client.Authenticate("asgerlassen@gmail.com", "Password");
+
+                    //    client.Send(message);
+
+                    //    client.Disconnect(true);
+                    //}
+
                     if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {
                         return RedirectToAction("ListUsers", "Administration");
                     }
 
-                    await signInManager.SignInAsync(user, isPersistent: false);                    
-
-                    return RedirectToAction("Index", "Home");
+                    ViewBag.ErrorTitle = "Registration succesful";
+                    ViewBag.ErrorMessage = $"Before you can login, please confirm you email, by clicking on the confirmation link we emailed you";
+                    return View("Error");
                 }
 
                 foreach (var error in result.Errors)
@@ -90,6 +126,34 @@ namespace AspIT.Web.Controllers
                 }
             }
             return View(model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (userId == null || token == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var user = await userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"The User ID {userId} is invalid";
+                return View("NotFound");
+            }
+
+            var result = await userManager.ConfirmEmailAsync(user, token);
+
+            if (result.Succeeded)
+            {
+                return View();
+            }
+
+            ViewBag.ErrorTitle = "Email cannot be confirmed";
+            return View("Error");
         }
 
         [HttpGet]
@@ -124,12 +188,18 @@ namespace AspIT.Web.Controllers
                 }
             }
 
+            model.ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
             if (ModelState.IsValid)
             {
-                var userName = model.UserName;
+                var userName = model.UserName;               
+
+                 var user = await userManager.FindByNameAsync(model.UserName);
+
                 if (userName.IndexOf('@') > -1)
                 {
-                    var user = await userManager.FindByEmailAsync(model.UserName);
+                    user = await userManager.FindByEmailAsync(model.UserName);
+
                     if (user == null)
                     {
                         ModelState.AddModelError(string.Empty, "Invalid login attempt.");
@@ -138,10 +208,16 @@ namespace AspIT.Web.Controllers
                     else
                     {
                         userName = user.UserName;
-
                     }
 
                 }
+
+                if (user != null && !user.EmailConfirmed && (await userManager.CheckPasswordAsync(user, model.Password)))
+                {
+                    ModelState.AddModelError(string.Empty, "Email not confirmed yet");
+                    return View(model);
+                }
+
                 var result = await signInManager.PasswordSignInAsync(userName, model.Password, model.RememberMe, false);
 
                 if (result.Succeeded)

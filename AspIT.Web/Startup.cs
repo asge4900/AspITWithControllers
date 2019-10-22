@@ -59,6 +59,8 @@ namespace AspIT.Web
                     options.Password.RequireUppercase = false;
                     options.Password.RequireDigit = false;
                     options.Password.RequireNonAlphanumeric = false;
+
+                    options.SignIn.RequireConfirmedEmail = true;
                 }
             }).AddEntityFrameworkStores<AspitContext>()
               .AddDefaultTokenProviders();
