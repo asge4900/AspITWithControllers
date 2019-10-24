@@ -16,7 +16,7 @@ namespace AspIT.Web.ViewModels
 
         [Required]
         [DataType(DataType.EmailAddress)]
-        //[Remote(action: "IsEmailInUse", controller: "Account")]
+        [Remote(action: "IsEmailInUse", controller: "Account")]
         public string Email { get; set; }
 
         [Required]

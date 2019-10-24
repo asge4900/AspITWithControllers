@@ -36,15 +36,7 @@ namespace AspIT.Web
             });
 
 
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddViewOptions(options =>
-                {
-                    if (Environment.IsDevelopment())
-                    {
-                        options.HtmlHelperOptions.ClientValidationEnabled = false;
-                    }
-                });          
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);                       
 
             var connection = @"Server=(localdb)\mssqllocaldb;Database=AspIT;Trusted_Connection=True;";
             services.AddDbContext<AspitContext>(options => options.UseSqlServer(connection));
