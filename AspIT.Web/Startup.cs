@@ -38,7 +38,7 @@ namespace AspIT.Web
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);                       
 
-            var connection = @"Server=(localdb)\mssqllocaldb;Database=AspIT;Trusted_Connection=True;";
+            var connection = @"Server=(localdb)\mssqllocaldb;Database=AspIT_Test;Trusted_Connection=True;";
             services.AddDbContext<AspitContext>(options => options.UseSqlServer(connection));
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>

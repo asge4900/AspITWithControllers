@@ -24,6 +24,32 @@ namespace AspIT.Web.Controllers
             this.signInManager = signInManager;           
         }
 
+        //private void SendEmail(string user, string email, string subject, string myMessage)
+        //{
+
+        //    var message = new MimeMessage();
+        //    message.From.Add(new MailboxAddress("Asger", "asgerlassen@gmail.com"));
+        //    message.To.Add(new MailboxAddress(user, email));
+        //    message.Subject = subject;
+        //    message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+        //    {
+
+        //        Text = myMessage
+        //    };
+
+        //    using (var client = new SmtpClient())
+        //    {
+        //        client.Connect("smtp.gmail.com", 587, false);
+
+        //        //Change Password 
+        //        client.Authenticate("asgerlassen@gmail.com", "Password");
+
+        //        client.Send(message);
+
+        //        client.Disconnect(true);
+        //    }
+        //}
+
         [HttpGet]
         [AllowAnonymous]
         public IActionResult ResetPassword(string token, string email)
@@ -81,6 +107,9 @@ namespace AspIT.Web.Controllers
 
                     var passwordResetLink = Url.Action("ResetPassword", "Account",
                         new { email = model.Email, token = token }, Request.Scheme);
+
+                    //Change Password in method
+                    //SendEmail(user.UserName, user.Email, "Reset Password", $"Please reset your password by clicking this link: <a href='{passwordResetLink}'>Link</a>");
 
                     //var message = new MimeMessage();
                     //message.From.Add(new MailboxAddress("Test project", "asgerlassen@gmail.com"));
